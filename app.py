@@ -15,12 +15,12 @@ def search_in_csv(medicine_name):
     result = df[df['Medicine Name'].str.lower().str.contains(medicine_name.strip().lower())]
     if not result.empty:
         medicine_info = result.iloc[0]
-        response = f"Here are the details I found for *{medicine_info['Medicine Name']}*:\n\n" \
-                   f"*Composition*: {medicine_info['Composition']}\n" \
-                   f"*Uses*: {medicine_info['Uses']}\n" \
-                   f"*Side Effects*: {medicine_info['Side_effects']}\n" \
-                   f"*Manufacturer*: {medicine_info['Manufacturer']}\n" \
-                   f"*Reviews*:\n" \
+        response = f"Here are the details I found for {medicine_info['Medicine Name']}:\n\n" \
+                   f"Composition: {medicine_info['Composition']}\n" \
+                   f"Uses: {medicine_info['Uses']}\n" \
+                   f"Side Effects: {medicine_info['Side_effects']}\n" \
+                   f"Manufacturer: {medicine_info['Manufacturer']}\n" \
+                   f"Reviews:\n" \
                    f"  - Excellent: {medicine_info['Excellent Review %']}%\n" \
                    f"  - Average: {medicine_info['Average Review %']}%\n" \
                    f"  - Poor: {medicine_info['Poor Review %']}%\n" \
@@ -69,7 +69,7 @@ def submit_data():
             return
 
         # Add the user's query to the conversation
-        st.session_state.conversation.append(f"<div style='color: blue;'><strong>You:</strong> {user_input}</div>")
+        st.session_state.conversation.append(f"<div class='user-message'><strong>You:</strong> {user_input}</div>")
 
         # Check if it's a follow-up question
         if user_input.strip().lower() in ["its uses", "its side effects", "tell me more", "composition", "its composition"]:
@@ -77,19 +77,19 @@ def submit_data():
                 last_message = st.session_state.conversation[-2].split(":")[-1].strip()
                 user_input = f"Tell me about the {user_input.strip()} of {last_message}."
             else:
-                st.session_state.conversation.append("<div style='color: white;'><strong>Assistant:</strong> Could you please specify the name of the medicine first?</div>")
+                st.session_state.conversation.append("<div class='assistant-message'><strong>Assistant:</strong> Could you please specify the name of the medicine first?</div>")
                 st.session_state.input_text = ""
                 return
 
         # First check the CSV dataset
         csv_response = search_in_csv(user_input)
         if csv_response:
-            st.session_state.conversation.append(f"<div style='color: white;'><strong>Assistant:</strong> {csv_response}</div>")
+            st.session_state.conversation.append(f"<div class='assistant-message'><strong>Assistant:</strong> {csv_response}</div>")
         else:
             # If not found in CSV, fetch from Google Gemini
-            st.session_state.conversation.append("<div style='color: white;'><strong>Assistant:</strong> I couldn't find details for this medicine in the dataset, so I'm fetching information from Google Gemini...</div>")
+            st.session_state.conversation.append("<div class='assistant-message'><strong>Assistant:</strong> I couldn't find details for this medicine in the dataset, so I'm fetching information from Google Gemini...</div>")
             response = fetch_from_gemini(user_input)
-            st.session_state.conversation.append(f"<div style='color: white;'><strong>Assistant:</strong> {response}</div>")
+            st.session_state.conversation.append(f"<div class='assistant-message'><strong>Assistant:</strong> {response}</div>")
 
         # Clear input field
         st.session_state.input_text = ""
@@ -108,6 +108,24 @@ def main():
 
     # Call the submission handler before rendering the input box
     submit_data()
+
+    # Apply custom CSS based on theme
+    st.markdown(
+        """
+        <style>
+        .user-message {
+            color: blue;
+        }
+        .assistant-message {
+            color: var(--text-color);
+        }
+        body {
+            background-color: var(--background-color);
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
 
     # Chat container with scrollable history
     chat_container = st.container()
