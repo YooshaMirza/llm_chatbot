@@ -2,6 +2,8 @@
 
 A smart, interactive chatbot built with Streamlit and powered by Google's Gemini LLM. MediSum provides users with detailed information about medicines by first checking a local database for quick, structured answers and then leveraging a powerful AI for more general queries.
 
+**Live Preview**:-[https://llmchatbot-dtlt9bfmcqup4kqek6yzfo.streamlit.app/](https://llmchatbot-dtlt9bfmcqup4kqek6yzfo.streamlit.app/)
+
 ## ✨ Core Features
 
 -   **Hybrid Search:** First queries a local `Medicine_Details.csv` file for fast, reliable information on composition, uses, side effects, and more.
